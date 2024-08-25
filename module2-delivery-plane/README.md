@@ -78,6 +78,47 @@ edit the yaml to move the image tag to v2 (it displays pod name and then you can
 You've built and install a cluster with a load balancer in it. Then deployed an application into it
 
 
+if we want to deploy an app and expose it, we can install an ingress then
+`kubectl apply  -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml`
+install an app 
+`kubectl create deployment hello-node -n otel-demo --image wesreisz/hello-node:v1`
+
+you can test this first with port-forwarding or through k9s
+`kubectl port-forward -n otel-demo hello-node 3000:3000`
+
+expose the deployment
+`kubectl expose -n otel-demo  deployment/hello-node --port 3000`
+create the ingress file
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otel-demo-ingress
+  namespace: otel-demo
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opentelemetry-demo-frontendproxy  
+            port:
+              number: 8080
+      - path: /wesreisz
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-node  
+            port:
+              number: 3000 
+```
+
+
 
 
 
