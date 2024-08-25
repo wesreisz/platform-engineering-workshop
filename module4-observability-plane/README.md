@@ -33,3 +33,8 @@ spec:
             port:
               number: 3000        
 ```
+
+
+Pick back up with this article:
+It has a good explaination of testing the failure scenerios with the demo app
+https://aws.plainenglish.io/a-deep-dive-into-opentelemetry-running-the-opentelemetry-demo-7ec4fd436136
