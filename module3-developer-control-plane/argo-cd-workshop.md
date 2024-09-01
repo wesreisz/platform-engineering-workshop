@@ -148,11 +148,21 @@ Create a new Argo CD application that points to the module-3-website repository:
 
 ```bash
 Copy code
-argocd app create module-3-website --repo http://localhost:3000/<username>/module-3-website.git --path . --dest-server https://kubernetes.default.svc --dest-namespace default
-```
-//@WES - THIS DOESNT WORK - Figure out why
 
-Replace <username> with your Gitea username.
+argocd app create module-3-website --repo http://gitea-http.gitea.svc.cluster.local:3000/wes/test.git --path . --dest-server https://kubernetes.default.svc --dest-namespace default
+```
+/*@WES - THIS DOESNT WORK - Figure out why
+It doesn't work because kubernetes.default.svc is internal dns to your kubernetes clusters. localhost:3000 is dns local to your machine. They don't share the same networking space. The error message: `repository not accessible` is indicating inside the cluster 
+where argo is running when it uses local host is doesn't find the project. You'll need to use an internal dns resolution for this
+to work. To figure that out, you need to get onto a pod inside the cluster. I did a `kubectl create deployment nginx --imagine nginx` to create a pod in cluster. Then logged into it. From there if you cat `/etc/resolv.conf` you will see that
+`search default.svc.cluster.local svc.cluster.local cluster.local` is the search domains. Now run `kubectl get endpoints` 
+(you can do this in k9s) and you'll see the end ip and dns you need to build up. This is what I got:
+http://gitea-http.gitea.svc.cluster.local:3000/wes/test.git
+
+Not you could also use the IP address but it will change.
+*/
+
+
 
 ### Step 11: Sync the Argo CD Application
 Go to the Argo CD UI at http://localhost:8080/ and log in with the credentials.
