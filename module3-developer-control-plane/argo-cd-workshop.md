@@ -135,11 +135,12 @@ echo "# Module 3 Website" > README.md
 git add README.md
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin http://localhost:3000/<username>/module-3-website.git
+git remote add origin http://localhost:3000/<username>/<repo_name>.git
 git push -u origin main
 ```
 
-Replace <username> with your Gitea username.
+Replace <username> with your Gitea username and <repo_name> with the name of the repo:
+ex: `http://localhost:3000/wes/test.git`
 
 ### Step 10: Create an Argo CD Application to Deploy from the Gitea Repository
 
