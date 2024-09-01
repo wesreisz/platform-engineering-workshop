@@ -179,6 +179,7 @@ argocd app sync module-3-website
 ### Step 12: Make a Change in the Git Repository and Watch It Auto-Deploy
 
 //@WES - This step could be better. Modifying a readme is not very visual.
+//
 
 Edit the README.md or add a new file, commit the changes, and push them to Gitea:
 
@@ -190,4 +191,21 @@ git push origin main
 ```
 
 Observe the changes in the Argo CD UI.
+
+
+
+Notes:
+* It does feel like too many steps, and it was difficult to understand what I was doing along the way.
+This is consistent with the one time I've used Argo before. For the gitrepo, we could use github for
+our internal work and use gitea for the qcon workshop (maybe we run it on a common server and have
+people create their accounts. That way it's local to teh wan). 
+* It's a bit easier to use port forwarding inside of k9s
+* May want to consider using hte ngnix we spoke about in modeule 2 for the web app
+* I'd rather not set set-context argo. It confuses you when the application deploys to default, 
+but you don't see it.
+* I added `-in-cluster ` when I added the argo add cluster
+* Should try not to switch between helm and yaml installs in cluster. We should keep it consistent throughout the workshop. He want to use helm, I should introduce it in the k8s platform section.
+
+
+
 
