@@ -63,8 +63,13 @@ Use the username admin and the password retrieved above.
 Add the kind cluster to Argo CD:
 
 ``` bash
-argocd cluster add kind-dev
+argocd cluster add kind-dev --insecure --in-cluster -y
 ```
+
+NOTE: In order for the argocd-server pod to use your kube config file it 
+needs to be able to resolve the ip. Kind is set to local hosts. There is
+are several options, but you can use an `in-cluster` command to also make
+it work: https://github.com/argoproj/argo-cd/issues/4204
 
 ### Step 5: Install Gitea for Git Server Functionality
 Add the Gitea Helm chart repository:
