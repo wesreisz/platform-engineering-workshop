@@ -208,4 +208,19 @@ but you don't see it.
 
 
 
+```bash
+kind create cluster --name dev --config ./create-cluster.yaml
+```
+
+install argo
+`kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+install ingress
+`kubectl apply -n ingress-nginx -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml`
+expose argo vi ingress
+``
+
+
+
+
+
 
