@@ -6,9 +6,8 @@ Delete the existing kind cluster:
 
 ```bash
 kind delete cluster --name dev
-Create a new kind cluster:
 ```
-
+Create a new kind cluster:
 ```bash
 kind create cluster --name dev --config ./create-cluster.yaml
 ```
@@ -44,7 +43,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 * Note: Open a new terminal tab to continue executing further commands.
 
-### Step 3: Log in to Argo CD
+## Step 3: Log in to Argo CD
 Retrieve the initial admin password:
 
 ```bash
@@ -59,7 +58,7 @@ argocd login localhost:8080
 
 Use the username admin and the password retrieved above.
 
-### Step 4: Connect the Kubernetes Cluster to Argo CD
+## Step 4: Connect the Kubernetes Cluster to Argo CD
 Add the kind cluster to Argo CD:
 
 ``` bash
@@ -95,7 +94,7 @@ helm install gitea gitea-charts/gitea -n gitea
 
 * Wait for the Gitea pods to be ready (this may take about a minute).
 
-### Step 6: Expose Gitea Using kubectl port-forward
+## Step 6: Expose Gitea Using kubectl port-forward
 
 Forward port 3000 to access Gitea:
 
@@ -109,14 +108,14 @@ Access Gitea in your browser at:
 
 http://localhost:3000
 
-### Step 7: Register a User in Gitea
+## Step 7: Register a User in Gitea
 Open the Gitea web interface at http://localhost:3000.
 
 Click on "Register" to create a new user account.
 
 Fill out the registration form to create the new user. This user will have administrative privileges by default if it is the first user created.
 
-### Step 8: Create a New Repository in Gitea
+## Step 8: Create a New Repository in Gitea
 Log in with the new user account you just created.
 
 Click on "New Repository" to create a new repository.
@@ -127,7 +126,6 @@ Name the repository module-3-website and create it. Note the URL for later use.
 Initialize a new Git repository locally and push it to Gitea:
 
 ``` bash
-Copy code
 mkdir module-3-website
 cd module-3-website
 git init
@@ -147,8 +145,6 @@ ex: `http://localhost:3000/wes/test.git`
 Create a new Argo CD application that points to the module-3-website repository:
 
 ```bash
-Copy code
-
 argocd app create module-3-website --repo http://gitea-http.gitea.svc.cluster.local:3000/wes/test.git --path . --dest-server https://kubernetes.default.svc --dest-namespace default
 ```
 /*@WES - THIS DOESNT WORK - Figure out why
