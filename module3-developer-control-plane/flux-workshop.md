@@ -9,16 +9,7 @@ k3d cluster delete mycluster
 ```
 Create a new kind cluster:
 ```bash
-k3d cluster create mycluster --agents 2 --registry-create mycluster-registry:0.0.0.0:5000
-
-```
-Configure Docker to Push Images to k3d Registry
-Once your cluster is up, you'll need to configure Docker to push images to this local registry. You can test the connection with:
-
-```bash
-docker pull alpine
-docker tag alpine localhost:5000/alpine
-docker push localhost:5000/alpine
+k3d cluster create mycluster --agents 2 --registry-create registry.localhost:5000
 ```
 
 ### Step 5: Install Gitea for Git Server Functionality
@@ -45,7 +36,7 @@ helm install gitea gitea-charts/gitea -n gitea
 
 * Wait for the Gitea pods to be ready (this may take about a minute).
 
-## Step 6: Expose Gitea Using kubectl port-forward
+### Step 6: Expose Gitea Using kubectl port-forward
 
 Forward port 3000 to access Gitea:
 
@@ -59,7 +50,7 @@ Access Gitea in your browser at:
 
 http://localhost:3000
 
-## Step 7: Register a User in Gitea
+### Step 7: Register a User in Gitea
 Open the Gitea web interface at http://localhost:3000.
 
 Click on "Register" to create a new user account.
@@ -71,20 +62,19 @@ Fill out the registration form to create the new user. This user will have admin
 We're going to clone a GitHub repository, remove the original remote, and automatically create a new repository in Gitea using your newly created credentials. This allows you to have a local copy of the project in Gitea.
 
 To run the script, participants need to execute it with their Gitea username and password as arguments, like this: 
-```bash 
+
+``` bash 
 bash create-repo.sh <gitea-username> <gitea-password>
 ``` 
 
-### Next Step is to setup githooks to create a new docker image on code push
+### Install an Actions Runner for GITEA
 
-@Wes Feel free to have a go at this
-Configure githooks to recognise when a new image needs to be created.
+Your pipeline needs a runner to do the building, lets make one in our cluster:
 
 ``` bash
-code goes here
+kubectl apply -f -n act-runner register-act-runner.yaml
 ```
 
-# BELOW NEEDS REWORKING
 
 ### Step 10: Install flux for CICD:
 
@@ -107,6 +97,59 @@ export GITHUB_USER=<your-username>
 ```bash
 flux check --pre
 ```
+
+### Step X: Configure flux to trigger the build script
+
+Open Docker desktop, click Settings, click docker engine
+
+Add this line to the root, this allows us to access our registry over http:
+
+``` json
+{
+  "insecure-registries" : ["registry.localhost:5000"]
+}
+```
+Flux can listen to webhooks via a receiver. You can create a Receiver resource like this:
+
+Create the Webhook Secret for the receiver:
+
+You need a Kubernetes secret containing the webhook token that GitHub will use. This can be done using:
+
+```bash
+kubectl create secret generic webhook-token \
+  --from-literal=token=your-github-webhook-secret-token \
+  --namespace=flux-system
+```
+
+Create the receiver
+
+```bash
+flux create receiver github-receiver \
+  --type github \
+  --event ping \
+  --event push \
+  --secret-ref webhook-token \
+  --resource GitRepository/react-article-display
+```
+
+Make a note of the webhook url that was generated.
+/hook/b0859a57efb94200a461ceb3b8c70b9b35f4a768eacf39fa788c73f4f5760932
+
+Create webhook in gitea
+
+Run the following command and make a note of the webhook receiver ip. We will give this to gitea in the webhook:
+
+``` bash
+kubectl get svc -n flux-system
+```
+
+Go back to your Gitea window and click on the react-application repo. Click settings and then click webhooks. Click create a new webhook and enter the webhook and the address of the webhook receiver. It should look something like this:
+
+```
+http://10.43.169.36/hook/<generated-token>
+```
+
+In secret token, enter ```webhood-token```
 
 
 ### Step 12: Bootstrap in flux the repo you'll be using:
@@ -187,12 +230,12 @@ kubectl port-forward svc/react-application 8080:8080 -n default
 
 ## Embedding Security in a Flux Pipeline
 
-Create the namespace for Starboard:
+Create the namespace for Trivy:
 
 ``` bash
 kubectl create ns trivy-system
 ```
-Use flux cli to source starboard artifact:
+Use flux cli to source trivy artifact:
 
 ``` bash
 flux create source helm trivy-operator --url https://aquasecurity.github.io/helm-charts --namespace trivy-system
