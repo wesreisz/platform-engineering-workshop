@@ -69,14 +69,23 @@ bash create-repo.sh <gitea-username> <gitea-password>
 
 ### Install an Actions Runner for GITEA
 
-Your pipeline needs a runner to do the building, lets make one in our cluster:
+Your pipeline needs a runner to do the building, lets make one in our cluster.
+
+First you'll need a registration token from gitea. Go into Gitea => Settings => Actions => Runners and click 'create new runner'. Copy the token and place it in the register-act-runner.yaml file under the value of GITEA_RUNNER_REGISTRATION_TOKEN.
+
+Now save and run:
 
 ``` bash
-kubectl apply -f -n act-runner register-act-runner.yaml
+kubectl apply -f -n act-runner deploy-act-runner.yaml
 ```
 
+Your runner should create in the cluster and once completed, be visible in gitea when clicking on the 'Runners' menu item
 
 ### Step 10: Install flux for CICD:
+
+Now that we have gitea set up with a potential runner, let's install our CI/CD to allow us to actually deploy something.
+
+We're going to use flux-cd
 
 ```bash
 brew install fluxcd/tap/flux
@@ -100,15 +109,6 @@ flux check --pre
 
 ### Step X: Configure flux to trigger the build script
 
-Open Docker desktop, click Settings, click docker engine
-
-Add this line to the root, this allows us to access our registry over http:
-
-``` json
-{
-  "insecure-registries" : ["registry.localhost:5000"]
-}
-```
 Flux can listen to webhooks via a receiver. You can create a Receiver resource like this:
 
 Create the Webhook Secret for the receiver:
@@ -137,11 +137,13 @@ Make a note of the webhook url that was generated.
 
 Create webhook in gitea
 
-Run the following command and make a note of the webhook receiver ip. We will give this to gitea in the webhook:
+Run the following command and make a note of the webhook receiver ip. We will give this to gitea when we create the webhook:
 
 ``` bash
 kubectl get svc -n flux-system
 ```
+
+ip = *add here*
 
 Go back to your Gitea window and click on the react-application repo. Click settings and then click webhooks. Click create a new webhook and enter the webhook and the address of the webhook receiver. It should look something like this:
 
@@ -149,7 +151,7 @@ Go back to your Gitea window and click on the react-application repo. Click sett
 http://10.43.169.36/hook/<generated-token>
 ```
 
-In secret token, enter ```webhood-token```
+In secret token, enter ```webhook-token```
 
 
 ### Step 12: Bootstrap in flux the repo you'll be using:
@@ -269,3 +271,7 @@ k3d cluster create MyCluster --servers 1 -p "8081:80@loadbalancer" -p "443:443@l
 
 
 use the inbuilt registry
+
+
+
+How to access local cluster gitea-http.gitea.svc.cluster.local
