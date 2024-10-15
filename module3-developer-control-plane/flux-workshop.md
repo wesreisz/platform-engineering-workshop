@@ -12,6 +12,11 @@ Create a new kind cluster:
 k3d cluster create mycluster --agents 2 --registry-create registry.localhost:5000
 ```
 
+**Note: when I do this, my cluster hangs in creating. It's unable to talk to registry where
+the images are stored. Adding `K3D_FIX_DNS=0 k3d` to the create cluster command (at the beginning)
+fixed it. This was the issue: https://github.com/k3d-io/k3d/issues/1449**
+
+
 ### Step 5: Install Gitea for Git Server Functionality
 Add the Gitea Helm chart repository:
 
@@ -69,7 +74,7 @@ bash create-repo.sh <gitea-username> <gitea-password>
 
 ### Install an Actions Runner for GITEA
 
-Your pipeline needs a runner to do the building, lets make one in our cluster.
+Your pipeline needs a runner to do the building, l  ets make one in our cluster.
 
 First you'll need a registration token from gitea. Go into Gitea => Settings => Actions => Runners and click 'create new runner'. Copy the token and place it in the register-act-runner.yaml file under the value of GITEA_RUNNER_REGISTRATION_TOKEN.
 
@@ -273,5 +278,23 @@ k3d cluster create MyCluster --servers 1 -p "8081:80@loadbalancer" -p "443:443@l
 use the inbuilt registry
 
 
-
 How to access local cluster gitea-http.gitea.svc.cluster.local
+
+
+Notes:
+-nice intro video: https://www.youtube.com/watch?v=_2SBUOo6Nwk
+-Rather than using port forwarding, I installed k3d with port 80 mapped to the ingress and then created an ingress
+ rule to the http-service for gittea:
+ - `K3D_FIX_DNS=0 k3d cluster create mycluster --agents 2 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"`
+ - `kubectl create ns gitea`
+ - `helm install gitea gitea-charts/gitea -n gitea`
+ - `kubectl apply -f ingress.yaml`
+ - add `repo.wesleyreisz.com` (or whatever you like) to your `/etc/hosts` file to resolve via ingress.
+
+ - run locally: `act_runner exec`
+ 
+ note: if you fail to find the docker daemon and you're using colima make sure to `export DOCKER_HOST="unix://$HOME/.colima/docker.sock"`
+
+note: to get the secret `kubectl get secrets/runner-secret --template={{.data.token}}`
+
+

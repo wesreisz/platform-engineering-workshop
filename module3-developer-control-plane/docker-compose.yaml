@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  gitea_act_runner:
+    image: vegardit/gitea-act-runner:dind-latest
+    environment:
+      GITEA_INSTANCE_URL: "http://repo.wesleyreisz.com:3000"
+      GITEA_RUNNER_REGISTRATION_TOKEN: "25MuUZXM6nDx7pKz2lGpYHndw9xpD4xMAzMteR0X"
+      GITEA_RUNNER_JOB_CONTAINER_NETWORK: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
