@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+data:
+  token: 4StjdZrH9T8CDR865fcjViNtww9aDQoldmjPtsri
+kind: Secret
+metadata:
+  name: runner-secret
+type: Opaque
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea-runner-deployment
+  labels:
+    app: gitea-runner
+  namespace: gitea
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea-runner
+  template:
+    metadata:
+      labels:
+        app: gitea-runner
+    spec:
+      volumes:       
+      - name: docker-config
+        configMap:
+          name: docker-config
+      containers:
+      - name: gitea-runner
+        image: vegardit/gitea-act-runner:dind-rootless-latest
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-config
+          mountPath: data/.config/docker/daemon.json
+          subPath: daemon.json
+        env:
+        - name: GITEA_INSTANCE_URL
+          value: "http://gitea-http.gitea.svc.cluster.local:3000"
+        - name: GITEA_RUNNER_REGISTRATION_TOKEN
+          value: "4StjdZrH9T8CDR865fcjViNtww9aDQoldmjPtsri"
