@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docker-config
+  namespace: gitea
+data:
+  daemon.json: |
+    {
+      "insecure-registries": ["registry.localhost:5000"]
+    }
