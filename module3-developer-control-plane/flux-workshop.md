@@ -72,6 +72,8 @@ To run the script, participants need to execute it with their Gitea username and
 bash create-repo.sh <gitea-username> <gitea-password>
 ``` 
 
+You can run the script anywhere but i find it helpful to run this in same directory I'm reading this so I can flick between the two
+
 ### Step 6: Install an Actions Runner for GITEA
 
 Your pipeline needs a runner to do the building, l  ets make one in our cluster.
