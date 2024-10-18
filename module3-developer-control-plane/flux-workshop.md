@@ -1,6 +1,6 @@
 # Flux Workshop: CI/CD with a Simple Website
 
-
+### Step 1: Create the cluster with a local registry
 
 Delete the existing kind cluster:
 
@@ -17,7 +17,7 @@ the images are stored. Adding `K3D_FIX_DNS=0 k3d` to the create cluster command 
 fixed it. This was the issue: https://github.com/k3d-io/k3d/issues/1449**
 
 
-### Step 5: Install Gitea for Git Server Functionality
+### Step 2: Install Gitea for Git Server Functionality
 Add the Gitea Helm chart repository:
 
 
@@ -41,7 +41,7 @@ helm install gitea gitea-charts/gitea -n gitea
 
 * Wait for the Gitea pods to be ready (this may take about a minute).
 
-### Step 6: Expose Gitea Using kubectl port-forward
+### Step 3: Expose Gitea Using kubectl port-forward
 
 Forward port 3000 to access Gitea:
 
@@ -55,7 +55,7 @@ Access Gitea in your browser at:
 
 http://localhost:3000
 
-### Step 7: Register a User in Gitea
+### Step 4: Register a User in Gitea
 Open the Gitea web interface at http://localhost:3000.
 
 Click on "Register" to create a new user account.
@@ -63,7 +63,7 @@ Click on "Register" to create a new user account.
 Fill out the registration form to create the new user. This user will have administrative privileges by default if it is the first user created.
 
 
-### Step 8: Initialize a Local Git Repository and Push to Gitea
+### Step 5: Initialize a Local Git Repository and Push to Gitea
 We're going to clone a GitHub repository, remove the original remote, and automatically create a new repository in Gitea using your newly created credentials. This allows you to have a local copy of the project in Gitea.
 
 To run the script, participants need to execute it with their Gitea username and password as arguments, like this: 
@@ -72,21 +72,27 @@ To run the script, participants need to execute it with their Gitea username and
 bash create-repo.sh <gitea-username> <gitea-password>
 ``` 
 
-### Install an Actions Runner for GITEA
+### Step 6: Install an Actions Runner for GITEA
 
 Your pipeline needs a runner to do the building, l  ets make one in our cluster.
 
-First you'll need a registration token from gitea. Go into Gitea => Settings => Actions => Runners and click 'create new runner'. Copy the token and place it in the register-act-runner.yaml file under the value of GITEA_RUNNER_REGISTRATION_TOKEN.
+First we'll need to apply a configmap that associates our local registry with the runner we're about to create. Run the following:
+
+``` bash
+kubectl apply -f docker-config.yaml
+```
+
+Next you'll need a registration token from gitea. Go into Gitea => Settings => Actions => Runners and click 'create new runner'. Copy the token and place it in the deploy-runner-container.yaml file under the value of GITEA_RUNNER_REGISTRATION_TOKEN.
 
 Now save and run:
 
 ``` bash
-kubectl apply -f -n act-runner deploy-act-runner.yaml
+kubectl apply -f deploy-runner-container.yaml
 ```
 
 Your runner should create in the cluster and once completed, be visible in gitea when clicking on the 'Runners' menu item
 
-### Step 10: Install flux for CICD:
+### Step 7: Install flux for CICD:
 
 Now that we have gitea set up with a potential runner, let's install our CI/CD to allow us to actually deploy something.
 
@@ -112,54 +118,11 @@ export GITHUB_USER=<your-username>
 flux check --pre
 ```
 
-### Step X: Configure flux to trigger the build script
+### Step 8: Bootstrap in flux the infra repo you'll be using:
 
-Flux can listen to webhooks via a receiver. You can create a Receiver resource like this:
+# Create a secret for a Git repository using basic authentication
 
-Create the Webhook Secret for the receiver:
-
-You need a Kubernetes secret containing the webhook token that GitHub will use. This can be done using:
-
-```bash
-kubectl create secret generic webhook-token \
-  --from-literal=token=your-github-webhook-secret-token \
-  --namespace=flux-system
-```
-
-Create the receiver
-
-```bash
-flux create receiver github-receiver \
-  --type github \
-  --event ping \
-  --event push \
-  --secret-ref webhook-token \
-  --resource GitRepository/react-article-display
-```
-
-Make a note of the webhook url that was generated.
-/hook/b0859a57efb94200a461ceb3b8c70b9b35f4a768eacf39fa788c73f4f5760932
-
-Create webhook in gitea
-
-Run the following command and make a note of the webhook receiver ip. We will give this to gitea when we create the webhook:
-
-``` bash
-kubectl get svc -n flux-system
-```
-
-ip = *add here*
-
-Go back to your Gitea window and click on the react-application repo. Click settings and then click webhooks. Click create a new webhook and enter the webhook and the address of the webhook receiver. It should look something like this:
-
-```
-http://10.43.169.36/hook/<generated-token>
-```
-
-In secret token, enter ```webhook-token```
-
-
-### Step 12: Bootstrap in flux the repo you'll be using:
+Bootstrap the repo with the secret:
 
 ```bash
 flux bootstrap github \
@@ -170,34 +133,60 @@ flux bootstrap github \
   --personal
 ```
 
-
-Clone the git repo:
+Clone th infra git repo:
 ```bash
 git clone https://github.com/$GITHUB_USER/react-app
 cd react-app
 ```
-
-
-Create a GitRepository manifest pointing to podinfo repository’s master branch:
-
-```bash
+<!-- Use the below if we decide to share all the infra as code -->
+<!-- ```bash
 flux create source git react \
-    --url=https://github.com/AnaisUrlichs/react-article-display \
+    --url=http://gitea-http.gitea.svc.cluster.local:3000/matt/react-article-display-workshop \
     --branch=main \
-    --export > ./clusters/my-cluster/react-article-display-source.yaml
-```
+    --username=matt \
+    --password=12345678 \
+    --export > ./clusters/my-cluster/react-article-display-source-workshop.yaml
+``` -->
 
-Commit and push the podinfo-source.yaml file to the fleet-infra repository:
+<!-- Commit and push the podinfo-source.yaml file to the infra repository:
 
 ```bash
-git add -A && git commit -m "Add podinfo GitRepository"
+git add -A && git commit -m "Add source GitRepository"
 git push
-```
+``` -->
 
-Use the flux create command to create a Kustomization that applies the podinfo deployment:
+Create a GitRepository manifest pointing to repository’s main branch:
 
 ``` bash
-flux create kustomization react-app \
+  flux create source git react \
+    --url=http://gitea-http.gitea.svc.cluster.local:3000/matt/react-article-display-workshop \
+    --branch=main \
+    --username=matt \
+    --password=12345678
+```
+
+Create a flux image repository and tie it to our existing k3 registry
+
+```bash
+kubectl apply -f flux-image-repository.yaml 
+```
+
+Create an image update automation that writes the new version of a docker image to a repository's manifest
+
+``` bash
+kubectl apply -f flux-image-update-automation.yaml
+```
+
+Create an image policy to decide which versions of our app will be deployed
+
+```bash
+kubectl apply -f flux-image-policy.yaml
+```
+
+Use the flux create command to create a Kustomization that applies the react app deployment:
+
+``` bash
+flux create kustomization react-article-display-workshop \
   --target-namespace=default \
   --source=react \
   --path="./deploy/manifests" \
@@ -206,9 +195,9 @@ flux create kustomization react-app \
   --interval=30m \
   --retry-interval=2m \
   --health-check-timeout=3m \
-  --export > ./clusters/my-cluster/react-app-kustomization.yaml
+  --export > ./clusters/my-cluster/react-article-display-workshop-kustomization.yaml
 ```
-
+*Gotcha: Make sure it doesn't append latest into the kustomize anywhere. That had me reeling for hours!
 
 Commit and push the Kustomization manifest to the repository:
 
@@ -229,13 +218,15 @@ Check podinfo has been deployed on your cluster:
 kubectl -n default get deployments,services
 ```
 
-Forward a port for now until I figure out a better way:
+Make a *code* change (change a string in app.js). Next change the .github/workflows/build-and-push.yaml to be a version above 1.0.1 (e.g. 1.0.2) build and watch everything deploy!
+
+Optional: If you want to make a change and see it reflected in the app you can access it this way:
 
 ```bash
 kubectl port-forward svc/react-application 8080:8080 -n default
 ```
 
-## Embedding Security in a Flux Pipeline
+### Step 9: Embedding Security in a Flux Pipeline
 
 Create the namespace for Trivy:
 
@@ -264,37 +255,4 @@ flux create kustomization react-app \\
   --prune=true \\
   --interval=5m \\
   ```
-
-  
-
-## Trivy command that works (CLI)
-trivy k8s kind-dev --scanners vuln --report summary
-
-## create cluster k3d
-
-k3d cluster create MyCluster --servers 1 -p "8081:80@loadbalancer" -p "443:443@loadbalancer" --registry-create registry:0.0.0.0:80
-
-
-use the inbuilt registry
-
-
-How to access local cluster gitea-http.gitea.svc.cluster.local
-
-
-Notes:
--nice intro video: https://www.youtube.com/watch?v=_2SBUOo6Nwk
--Rather than using port forwarding, I installed k3d with port 80 mapped to the ingress and then created an ingress
- rule to the http-service for gittea:
- - `K3D_FIX_DNS=0 k3d cluster create mycluster --agents 2 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"`
- - `kubectl create ns gitea`
- - `helm install gitea gitea-charts/gitea -n gitea`
- - `kubectl apply -f ingress.yaml`
- - add `repo.wesleyreisz.com` (or whatever you like) to your `/etc/hosts` file to resolve via ingress.
-
- - run locally: `act_runner exec`
- 
- note: if you fail to find the docker daemon and you're using colima make sure to `export DOCKER_HOST="unix://$HOME/.colima/docker.sock"`
-
-note: to get the secret `kubectl get secrets/runner-secret --template={{.data.token}}`
-
 

@@ -1,7 +1,7 @@
 ---
 apiVersion: v1
 data:
-  token: 4StjdZrH9T8CDR865fcjViNtww9aDQoldmjPtsri
+  token: jyNJ7JJ6axLHfiUvXo56qSCsFi7v0i6HS5VVpC7k
 kind: Secret
 metadata:
   name: runner-secret
@@ -41,4 +41,4 @@ spec:
         - name: GITEA_INSTANCE_URL
           value: "http://gitea-http.gitea.svc.cluster.local:3000"
         - name: GITEA_RUNNER_REGISTRATION_TOKEN
-          value: "4StjdZrH9T8CDR865fcjViNtww9aDQoldmjPtsri"
+          value: "jyNJ7JJ6axLHfiUvXo56qSCsFi7v0i6HS5VVpC7k"

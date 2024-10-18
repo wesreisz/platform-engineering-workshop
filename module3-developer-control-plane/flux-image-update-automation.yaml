@@ -1,0 +1,19 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: react-app-update
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: react
+  git:
+    commit:
+      author:
+        email: "your-email@example.com"
+        name: "Your Name"
+    push:
+      branch: main
+  update:
+    path: ./deploy/manifests
