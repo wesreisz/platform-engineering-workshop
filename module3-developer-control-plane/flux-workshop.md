@@ -112,7 +112,7 @@ export GITHUB_TOKEN=<your-token>
 export GITHUB_USER=<your-username>
 ```
 
-### Step 11: Check your k8 cluster meets flux requirements:
+Check your k8 cluster meets flux requirements:
 
 ```bash
 flux check --pre
@@ -120,9 +120,9 @@ flux check --pre
 
 ### Step 8: Bootstrap in flux the infra repo you'll be using:
 
-# Create a secret for a Git repository using basic authentication
 
-Bootstrap the repo with the secret:
+
+Bootstrap the infra repo
 
 ```bash
 flux bootstrap github \
@@ -133,7 +133,7 @@ flux bootstrap github \
   --personal
 ```
 
-Clone th infra git repo:
+Clone the infra git repo:
 ```bash
 git clone https://github.com/$GITHUB_USER/react-app
 cd react-app
@@ -218,7 +218,9 @@ Check podinfo has been deployed on your cluster:
 kubectl -n default get deployments,services
 ```
 
-Make a *code* change (change a string in app.js). Next change the .github/workflows/build-and-push.yaml to be a version above 1.0.1 (e.g. 1.0.2) build and watch everything deploy!
+Make a *code* change (e.g. change a string in app.js). 
+
+Next change the .github/workflows/build-and-push.yaml to be a version above 1.0.1 (e.g. 1.0.2) commit, push then watch everything build and deploy!
 
 Optional: If you want to make a change and see it reflected in the app you can access it this way:
 
