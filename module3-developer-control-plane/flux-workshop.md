@@ -250,13 +250,14 @@ flux create helmrelease trivy-operator --chart trivy-operator \
   --namespace trivy-system
 ```
 
-  Deploy the app:
-``` bash
-flux create kustomization react-app \\
-  --target-namespace=app \\
-  --source=react \\
-  --path="./manifests" \\
-  --prune=true \\
-  --interval=5m \\
-  ```
+Type ': vuln' and watch all the vulnerability reports for the cluster arrive.
 
+We're interested in the react-article-display report. I have intentionally used an older version of ngninx to throw up lots of vulnerabilities nginx:1.21-alpine. The flow I'm thinking is to set the dependency to ngninx:alpine, build, push and that should sort most of the problems out.
+
+Run the below to get more detail on a report:
+
+``` bash
+kubectl describe vulnerabilityreports <YOUR-VULN-REPORT-ID>
+```
+
+(* I think I'm making an assumption that the trivy cli is installed here. Maybe add a step)

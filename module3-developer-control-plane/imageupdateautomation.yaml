@@ -1,0 +1,11 @@
+apiVersion: image.toolkit.fluxcd.io/v1alpha1
+kind: ImageUpdateAutomation
+metadata:
+  name: react-app-update
+  namespace: flux-system
+spec:
+  interval: 1m
+  update:
+    path: ./deploy/manifests  # Path to the manifest that deploys your application
+    strategy:
+      type: Setters
