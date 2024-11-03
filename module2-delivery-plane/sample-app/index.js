@@ -1,8 +1,14 @@
-const http = require("http");
-  http
-   .createServer(function(request, response){
-       console.log("request received");
-       response.end("Hello World", "utf-8")
-   })
-   .listen(3000)
-  console.log("server running: localhost:3000");
+const { createServer } = require('node:http');
+
+const port = 8080;
+
+const server = createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.write('Hello World \n\n');
+  res.end(JSON.stringify(process.env));
+});
+
+server.listen(port, () => {
+  console.log(`Server running on port: ${port}`);
+});
