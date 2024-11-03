@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: "2024-11-03T15:26:11Z"
+  generation: 1
+  name: hello-world
+  namespace: default
+  resourceVersion: "2921"
+  uid: cd0167a6-1218-4c01-b374-568eab3261fe
+spec:
+  ingressClassName: traefik
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: hello-world
+            port:
+              number: 8080
+        path: /
+        pathType: Exact
+status:
+  loadBalancer:
+    ingress:
+    - ip: 172.21.0.3
+    - ip: 172.21.0.4
+    - ip: 172.21.0.5
+    - ip: 172.21.0.6
