@@ -19,12 +19,7 @@ helm repo update
 * Click on "Register" to create a new user account
 * Fill out the registration form to create the new user. This user will have administrative privileges by default if it is the first user created.
 
-6 - Create a repo
-This is a convenience script that clones repo and adds it to your
-local gitea server.
-`bash create-repo.sh <gitea-username> <gitea-password>`
-
-7 - Install an Actions Runner for GITEA
+6 - Install an Actions Runner for GITEA
 
 Your pipeline needs a runner to do the building, l  ets make one in our cluster.
 
@@ -41,5 +36,10 @@ kubectl apply -f deploy-runner-container.yaml
 
 Your runner should create in the cluster and once completed, be visible in gitea when clicking on the 'Runners' menu item
 
+6 - Create a repo
+Rewrite this script
+`bash create-repo.sh <gitea-username> <gitea-password>`
 
-8 - Review your Action and build
+
+7 - Review your Action and build
+# your pipeline file is under .github/workflows
