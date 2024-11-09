@@ -42,7 +42,9 @@ flux create source git tilt-avatars \
 10 - list sources
 `flux get sources all`
 
-10 - Deploy your application 
+11 - Update our app deployments to use k3d
+
+12 - Deploy your application 
 ```bash
 flux create kustomization tilt-avatars-app \
 --target-namespace=default \

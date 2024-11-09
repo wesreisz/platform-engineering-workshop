@@ -32,4 +32,4 @@ spec:
         - name: GITEA_INSTANCE_URL
           value: "http://gitea-http.gitea.svc.cluster.local:3000"
         - name: GITEA_RUNNER_REGISTRATION_TOKEN
-          value: "dPVMHIn6uGqVcna5kkZA0nPP7BU4TACCpXlW0sBA"
+          value: "Wsp7AYEFGy8GCxbmF9VrwP1ggGJbjjbKIHsTdQzc"
