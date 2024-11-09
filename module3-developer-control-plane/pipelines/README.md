@@ -14,14 +14,13 @@ helm repo update
 4 - Forward port 3000 to access Gitea
 `kubectl port-forward svc/gitea-http -n gitea 3000:3000`
 
-5 - Create a user
-* Open the Gitea web interface at http://localhost:3000
-* Click on "Register" to create a new user account
-* Fill out the registration form to create the new user. This user will have administrative privileges by default if it is the first user created.
+5 - Use the cluster alias in your host file so you can 
+resolve inside and outside your cluster
+`127.0.0.1	localhost  gitea-http.gitea.svc.cluster.local`
 
 6 - Install an Actions Runner for GITEA
 
-Your pipeline needs a runner to do the building, l  ets make one in our cluster.
+Your pipeline needs a runner to do the building, lets make one in our cluster.
 
 First we'll need to apply a configmap that associates our local registry with the runner we're about to create. Run the following:
 
