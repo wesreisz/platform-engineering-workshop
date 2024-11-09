@@ -173,7 +173,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: dev.wesleyreisz.com
+    - host: gitea-http.gitea.svc.cluster.local
       paths:
         - path: /
           pathType: Prefix
@@ -516,7 +516,7 @@ gitea:
 ## Redis cluster and [Redis](#redis) cannot be enabled at the same time.
 ## @descriptionEnd
 redis-cluster:
-  enabled: true
+  enabled: false
   usePassword: false
   cluster:
     nodes: 3 # default: 6
@@ -533,7 +533,7 @@ redis-cluster:
 ## Redis and [Redis cluster](#redis-cluster) cannot be enabled at the same time.
 ## @descriptionEnd
 redis:
-  enabled: false
+  enabled: true
   architecture: standalone
   global:
     redis:
@@ -559,7 +559,7 @@ postgresql-ha:
       database: gitea
       password: gitea
       username: gitea
-  enabled: true
+  enabled: false
   postgresql:
     repmgrPassword: changeme2
     postgresPassword: changeme1
@@ -581,7 +581,7 @@ postgresql-ha:
 ## @param postgresql.global.postgresql.service.ports.postgresql PostgreSQL service port (overrides `service.ports.postgresql`)
 ## @param postgresql.primary.persistence.size PVC Storage Request for PostgreSQL volume
 postgresql:
-  enabled: false
+  enabled: true
   global:
     postgresql:
       auth:
