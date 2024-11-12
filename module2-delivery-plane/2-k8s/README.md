@@ -6,7 +6,7 @@
 2 - Create a cluster
 ```bash
 K3D_FIX_DNS=0 
-k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
+k3d cluster create mycluster --agents 3  -p "80:80@loadbalancer"
 ```
 
 NOTE: There may be a DNS issue that requires the env variable to be set to disable (K3D_FIX_DNS=0).
@@ -17,9 +17,16 @@ NOTE: There may be a DNS issue that requires the env variable to be set to disab
 4 - Expose the service
 `kubectl expose deployment hello-world --port 8080`
 5 - Create an ingress
-`kubectl create ingress hello-world --rule="/=hello-world:8080"`
+`kubectl create ingress hello-world-ingress --rule="/=hello-world:8080"`
 6 - Scale the deployment
 `kubectl scale deployment/hello-world --replicas=10`
+
+7 - Delete the deployment, service, ingress
+```bash
+kubectl delete deployment hello-world
+kubectl delete ingress hello-world-ingress
+kubectl delete svc hello-world
+```
 
 **imperative**
 7 - Create the same in a declarative way
