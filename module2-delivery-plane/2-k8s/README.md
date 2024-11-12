@@ -4,7 +4,10 @@
 `brew install k3d`
 
 2 - Create a cluster
-`K3D_FIX_DNS=0 k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"`
+```bash
+K3D_FIX_DNS=0 
+k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
+```
 
 NOTE: There may be a DNS issue that requires the env variable to be set to disable (K3D_FIX_DNS=0).
 

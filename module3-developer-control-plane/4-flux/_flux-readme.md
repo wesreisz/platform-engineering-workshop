@@ -52,5 +52,5 @@ flux create kustomization tilt-avatars-app \
 --path="./deploy" \
 --prune=true \
 --wait=true \
---interval=5m
+--interval=3m
 ```

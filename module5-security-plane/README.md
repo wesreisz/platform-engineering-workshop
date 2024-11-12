@@ -1,9 +1,14 @@
-Need to dive into tooling for security
-starboard looks like a great to use for the section. It sits on cluster is separate from the pipeline. 
-We also need in pipline and software supply chain scaning. BOM creation
+1 - Create a cluster
+`k3d cluster create mycluster --agents 2`
 
-plan
-- create cluster w/ ingress
-- run azure voting app in cluster
-- install starboard and scan via cli
-- install starboard on cluste rand scan via cli
+2 - Install Trivy:
+
+``` bash
+helm install trivy-operator aqua/trivy-operator \
+  --namespace trivy-system \
+  --create-namespace \
+  --set="trivy.ignoreUnfixed=true" \
+  --version 0.8.0
+```
+
+1 - 
