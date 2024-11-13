@@ -11,4 +11,4 @@ helm install trivy-operator aqua/trivy-operator \
   --version 0.8.0
 ```
 
-1 - 
+3 -  
