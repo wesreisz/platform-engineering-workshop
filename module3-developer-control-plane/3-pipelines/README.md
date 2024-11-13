@@ -40,10 +40,9 @@ kubectl apply -f deploy-runner-container.yaml
 
 Your runner should create in the cluster and once completed, be visible in gitea when clicking on the 'Runners' menu item
 
-6 - Create a repo
-Rewrite this script
+6 - Create a repo This script checksout the tilt-avatar code and changes the origin to point to your new gitea instance.
 `bash create-repo.sh <gitea-username> <gitea-password>`
-
 
 7 - Review your Action and build
 # your pipeline file is under .github/workflows
+You will see that a container was built and pushed until the actions tab in the ui
