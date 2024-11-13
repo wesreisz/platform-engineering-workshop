@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Check if the correct number of arguments is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <gitea-username>"
+    exit 1
+fi
+
+# Input parameters
+GITEA_USER="$1"
+
 # Variables
 GITHUB_REPO_URL="https://github.com/wesreisz/tilt-avatars.git"
 GITEA_URL="http://gitea-http.gitea.svc.cluster.local:3000"  # Update with your Gitea instance URL
