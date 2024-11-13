@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <gitea-username>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <gitea-username> <gitea-password>"
     exit 1
 fi
 
 # Input parameters
 GITEA_USER="$1"
+GITEA_PASSWORD="$2"
 
 # Variables
 GITHUB_REPO_URL="https://github.com/wesreisz/tilt-avatars.git"
