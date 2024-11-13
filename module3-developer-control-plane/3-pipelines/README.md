@@ -1,10 +1,12 @@
+NOTE: If you already have cluster from the previous section, skip to step 2
+
 1 - Create a cluster. We're also setting up a registry inside the cluster that we'll use for images. Note: There isn't a UI on this registry.
 ```bash
 export K3D_FIX_DNS=0
 k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
 ```
 
-2 - Ensure helm is installed
+2 - Ensure helm is installed. It should already be installed on the VDI in the classroom.
 ```bash
 brew install helm
 helm repo add gitea-charts https://dl.gitea.io/charts/

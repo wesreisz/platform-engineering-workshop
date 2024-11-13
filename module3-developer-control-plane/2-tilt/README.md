@@ -6,7 +6,8 @@ export K3D_FIX_DNS=0
 k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
 ```
 
-1a - Install Tilt: Tilt is already installed on the VDI we're using. If you're doing this locally, you can install it using `brew install tilt`
+2 - Ensure that Tilt is installed. It should already be installed on the VDI we're using in the classroom.
+ `brew install tilt`
 
 2 - clone the code repo to a folder outside your current repo on the local machine (such as your home directory `cd ~/`)
 `git clone https://github.com/wesreisz/tilt-avatars.git`
