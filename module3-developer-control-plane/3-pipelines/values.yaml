@@ -454,8 +454,8 @@ gitea:
   admin:
     # existingSecret: gitea-admin-secret
     existingSecret:
-    username: gitea_admin
-    password: password00
+    username: gitea
+    password: gitea
     email: "gitea@local.domain"
     passwordMode: keepUpdated
 
