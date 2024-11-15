@@ -10,5 +10,3 @@ helm install trivy-operator aqua/trivy-operator \
   --set="trivy.ignoreUnfixed=true" \
   --version 0.8.0
 ```
-
-3 -  

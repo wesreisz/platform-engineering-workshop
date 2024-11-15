@@ -32,45 +32,70 @@ flux bootstrap git \
 --interval=30m 
 ```
 
-8 - Register your app repository as a Flux source. We're using the tilt-avatars 
-```bash
-flux create source git tilt-avatars \
---url=http://gitea-http.gitea.svc.cluster.local:3000/gitea/tilt-avatars \
---branch=main \
---interval=1m
+NOTE: Make sure your deployment files are configured to use the internal registry. To switch to the internal registry, swap these the comment on these two lines in your deployment descriptions (`/deploy/web.yaml` and `/deploy/api.yaml`):
+```yaml api.yaml
+image: tilt-avatar-api
+#image: registry.localhost:5000/tilt-avatar-api:v2
 ```
-
-9 - list sources
-`flux get sources all`
-
-10 - Update our app deployments to use k3d
-
-11 - Deploy your application 
-```bash
-flux create kustomization tilt-avatars-app \
---target-namespace=default \
---source=tilt-avatars \
---path="./deploy" \
---prune=true \
---wait=true \
---interval=3m
-```
-
-it fails because we moved the image location to an internal registry. let's remap it.
-
-12 - Update the images
-```bash
+```bash web.yaml
 #image: tilt-avatar-web
 image: registry.localhost:5000/tilt-avatar-web:v2
 ```
 
+8 - Register your app repository as a Flux source. We're using the tilt-avatars project we had before. Also this command will generate the file to register the source in your mycluster folder. It would be greated until it's commited and deployed 
 ```bash
-#image: tilt-avatar-api
-image: registry.localhost:5000/tilt-avatar-api:v2
+flux create source git tilt-avatars \
+  --url=http://gitea-http.gitea.svc.cluster.local:3000/gitea/tilt-avatars.git \
+  --branch=main \
+  --interval=1m \
+  --export > ./clusters/mycluster/tilt-avatars-source.yaml
 ```
 
-12 - Commit it and it will redeploy.
-13 - Make changes and trigger reploys.
+NOTE: Because there are files in the deploy directory that are not k8s yaml, the automatic deployment will silently fail. So we need to excluse those files. After generating this yaml, open it and edit to exclude the two dockerfiles in deploy. Here is what is should look like:
+```yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: tilt-avatars
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  url: http://gitea-http.gitea.svc.cluster.local:3000/gitea/tilt-avatars.git
+  ignore: |
+    # include deploy dir
+    !/deploy
+    # exclude non-Kubernetes YAMLs
+    /deploy/api.dockerfile
+    /deploy/web.dockerfile
+```
 
-NOTE: I didn't configure the additional plugin to track version commits and autodeploy but this is possible.
+11 - Create your Kustomization. 
+```bash
+flux create kustomization tilt-avatars \
+  --target-namespace=default \
+  --source=tilt-avatars \
+  --path="./deploy" \
+  --prune=true \
+  --wait=true \
+  --interval=30m \
+  --retry-interval=2m \
+  --health-check-timeout=3m \
+  --export > ./clusters/mycluster/tilt-avatar-kustomization.yaml
+```
+
+NOTE: It may fails if you didn't move the image to the internal registry. 
+
+12 - Commit and push your code to the infra repo
+```bash
+git add .
+git commit -m "adding flux source/kustomization for tilt avatars"
+```
+
+13 - List sources. You will see the kustomization kick off the deployment and then if you're still running k8s, you can see the pods deploy. 
+```bash
+watch flux get kustomizations
+```
+
 
