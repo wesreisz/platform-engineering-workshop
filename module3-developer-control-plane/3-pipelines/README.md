@@ -32,7 +32,11 @@ First we'll need to apply a configmap that associates our local registry with th
 ``` bash
 kubectl apply -f docker-config.yaml
 ```
-Now save and run:
+For this next piece, we're creating a docker runner to be able to build images for us. In order to create the runner, we will need 
+to get a key from the UI. In the upper right corner of the Gitea UI, click on the dropdown for profile and settings. Select settings 
+from the dropdown. Look for Action in the leftside menu, and click on runners. When it loads, back on the right you will see "Create 
+a Runner". Click on that and copy the registration token into your buffer. Open the file deploy-runner-container in th3 pipelines folder
+of the git project you checked out and update the token in the yaml file (it's at the end). Once you've done that, apply the yaml below
 
 ``` bash
 kubectl apply -f deploy-runner-container.yaml

@@ -1,8 +1,8 @@
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageRepository
 metadata:
-  name: react-app-registry
+  name: tilt-avatar-registry
   namespace: flux-system
 spec:
   interval: 1m0s
-  image: registry.localhost:5000/react-article-display
+  image: registry.localhost:5000/tilt-avatar-web
