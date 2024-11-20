@@ -1,4 +1,6 @@
 **Lab 1 (Guided)** 
+
+NOTE: If you're working on the VDI, step one should be done.
 1 - Install k9s & k3d
 `brew install k9s`
 `brew install k3d`
@@ -8,11 +10,10 @@
 Note: There is an issue with how resolve.conf is configured. On MacOS (Apple Silicone), this will bypass that. However,
 on the linux box, I added a new dns resolver to get it working.
 ```bash
-K3D_FIX_DNS=0  
 k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
 ```
 
-NOTE: There may be a DNS issue that requires the env variable to be set to disable (K3D_FIX_DNS=0).
+NOTE: There may be a DNS issue that requires the env variable to be set to disable (K3D_FIX_DNS=0). I see this on MacOS Apple Silicon (`export K3D_FIX_DNS=0` will toggle the feature off).
 
 **imperative**
 3 - Create an app

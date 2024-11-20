@@ -92,7 +92,7 @@ https://fluxcd.io/flux/guides/image-update/
 
 
 ------
-useful commands:
+useful commands for flux:
 `flux reconcile kustomization flux-system --with-source` : forces the reconcilation to happen
 `flux delete kustomization  tilt-avatars` : delete the kustomization
 Remove flux

@@ -2,7 +2,6 @@ NOTE: If you already have cluster from the previous section, skip to step 2
 
 1 - Create a cluster. We're also setting up a registry inside the cluster that we'll use for images. Note: There isn't a UI on this registry.
 ```bash
-export K3D_FIX_DNS=0
 k3d cluster create mycluster --agents 3 --registry-create registry.localhost:5000 -p "80:80@loadbalancer"
 ```
 
@@ -13,7 +12,7 @@ helm repo add gitea-charts https://dl.gitea.io/charts/
 helm repo update
 ```
 
-3 - Install Gitea - Wait for the Gitea pods to be ready (this may take about a minute).
+3 - Install Gitea - Wait for the Gitea pods to be ready (this may take about a minute). Make sure you're in the 2-pipelines folder. Also note the default install, includes redis and postgres in HA mode, so it will take a second to spin up. Things will show red while that happens.
 `helm install gitea gitea-charts/gitea --namespace gitea  --values ./values.yaml --create-namespace`
 
 4 - Forward port 3000 to access Gitea

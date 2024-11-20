@@ -1,0 +1,2 @@
+#Platform Engineering
+1 - If you're working from the VDI, the software in the install.sh are already on your machine. If not, you will need the thing mentioned there to run the lab portions of the conversation.
