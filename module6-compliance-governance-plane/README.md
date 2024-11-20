@@ -25,7 +25,7 @@ helm install gatekeeper/gatekeeper --name-template=gatekeeper --namespace gateke
 `kubectl apply -f ./block-nodeport-constraint.yaml`
 
 4 - Test it
-`kubectl expose deployment my-nginx-svc --type=NodePort --port 80`
+`kubectl expose deployment my-nginx --type=NodePort --port 80`
 
 
 ----------------
