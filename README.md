@@ -1,4 +1,4 @@
-#Platform Thinking: Strategies for Building Effective Platform Teams
+# Platform Thinking: Strategies for Building Effective Platform Teams
 
 Materials for the platform engineering workshop.
 Level: Introduction to platform / intermediate in level
