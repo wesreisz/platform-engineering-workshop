@@ -1,6 +1,7 @@
 **Lab 1 (Guided)** 
 
-NOTE: If you're working on the VDI, step one should be done.
+**NOTE: If you're working on the VDI, step one should be done.**
+
 1 - Install k9s & k3d
 `brew install k9s`
 `brew install k3d`
